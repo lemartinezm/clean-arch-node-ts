@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --watchAll --collectCoverage"
+    "test": "jest --watchAll --collectCoverage",
+    "dev:build": "tsc --watch",
+    "dev:serve": "nodemon -e js -w lib lib/main.js"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +24,7 @@
   },
   "dependencies": {
     "express": "^4.18.2",
-    "mongodb": "^4.11.0"
+    "mongodb": "^4.11.0",
+    "nodemon": "^2.0.20"
   }
 }

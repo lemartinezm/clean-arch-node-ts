@@ -23,4 +23,9 @@ export class MongoDBContactDataSource implements ContactDataSource {
       email: item.email,
     }));
   }
+
+  async delete(query: object) {
+    const result = await this.database.deleteOne(query);
+    return result;
+  }
 }

@@ -18,4 +18,9 @@ export class ContactRepositoryImpl implements ContactRepository {
     const result = await this.contactDataSource.getAll();
     return result;
   }
+
+  async deleteContact(query: object): Promise<boolean> {
+    const result = await this.contactDataSource.delete(query);
+    return result;
+  }
 }

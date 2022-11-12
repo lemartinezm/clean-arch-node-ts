@@ -6,6 +6,7 @@ import { ContactRepositoryImpl } from "./domain/repositories/contactRepository";
 import { MongoClient } from "mongodb";
 import { Database } from "./data/interfaces/dataSources/database";
 import { MongoDBContactDataSource } from "./data/dataSources/mongodb/mongodbContactDataSource";
+import { DeleteContact } from "./domain/useCases/contact/deleteContact";
 
 (async () => {
   const client: MongoClient = new MongoClient(
@@ -17,6 +18,7 @@ import { MongoDBContactDataSource } from "./data/dataSources/mongodb/mongodbCont
   const contactDatabase: Database = {
     find: (query) => db.collection("contacts").find(query).toArray(),
     insertOne: (doc) => db.collection("contacts").insertOne(doc),
+    deleteOne: (query) => db.collection("contacts").deleteOne(query),
   };
 
   const contactMiddleware = ContactsRouter(
@@ -24,6 +26,9 @@ import { MongoDBContactDataSource } from "./data/dataSources/mongodb/mongodbCont
       new ContactRepositoryImpl(new MongoDBContactDataSource(contactDatabase))
     ),
     new CreateContact(
+      new ContactRepositoryImpl(new MongoDBContactDataSource(contactDatabase))
+    ),
+    new DeleteContact(
       new ContactRepositoryImpl(new MongoDBContactDataSource(contactDatabase))
     )
   );

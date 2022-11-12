@@ -1,10 +1,12 @@
 import { Router, Request, Response } from "express";
 import { CreateContactUseCase } from "../../domain/interfaces/useCases/contact/createContact";
+import { DeleteContactUseCase } from "../../domain/interfaces/useCases/contact/deleteContact";
 import { GetAllContactsUseCase } from "../../domain/interfaces/useCases/contact/getAllContacts";
 
 export default function ContactsRouter(
   getAllContactsUseCase: GetAllContactsUseCase,
-  createContactUseCase: CreateContactUseCase
+  createContactUseCase: CreateContactUseCase,
+  deleteContactUseCase: DeleteContactUseCase
 ) {
   const router = Router();
 
@@ -23,6 +25,15 @@ export default function ContactsRouter(
       res.status(201).send({ message: "Created" });
     } catch (err) {
       res.status(500).send({ message: "Error saving data" });
+    }
+  });
+
+  router.delete("/", async (req: Request, res: Response) => {
+    try {
+      await deleteContactUseCase.execute(req.body);
+      res.status(204).send({});
+    } catch (err) {
+      res.status(500).send({ message: "Error deleting data" });
     }
   });
 

@@ -1,6 +1,7 @@
 import request from "supertest";
 import { Contact } from "../../../src/domain/entities/contact";
 import { CreateContactUseCase } from "../../../src/domain/interfaces/useCases/contact/createContact";
+import { DeleteContactUseCase } from "../../../src/domain/interfaces/useCases/contact/deleteContact";
 import { GetAllContactsUseCase } from "../../../src/domain/interfaces/useCases/contact/getAllContacts";
 import ContactRouter from "../../../src/presentation/routers/contactRouter";
 import server from "../../../src/server";
@@ -17,16 +18,29 @@ class MockCreateContactUseCase implements CreateContactUseCase {
   }
 }
 
+class MockDeleteContactUseCase implements DeleteContactUseCase {
+  execute(query: object): Promise<boolean> {
+    throw new Error("Method not implemented.");
+  }
+}
+
 describe("Contact Router", () => {
   let mockCreateContactUseCase: CreateContactUseCase;
   let mockGetAllContactsUseCase: GetAllContactsUseCase;
+  let mockDeleteContactUseCase: DeleteContactUseCase;
 
   beforeAll(() => {
     mockGetAllContactsUseCase = new MockGetAllContactsUseCase();
     mockCreateContactUseCase = new MockCreateContactUseCase();
+    mockDeleteContactUseCase = new MockDeleteContactUseCase();
+
     server.use(
       "/contact",
-      ContactRouter(mockGetAllContactsUseCase, mockCreateContactUseCase)
+      ContactRouter(
+        mockGetAllContactsUseCase,
+        mockCreateContactUseCase,
+        mockDeleteContactUseCase
+      )
     );
   });
 
@@ -90,6 +104,30 @@ describe("Contact Router", () => {
         .mockImplementation(() => Promise.reject(Error()));
 
       const response = await request(server).post("/contact").send(InputData);
+      expect(response.status).toBe(500);
+    });
+  });
+
+  describe("DELETE /contact", () => {
+    const query = {
+      firstName: "Luis",
+    };
+
+    it("should return 204 status", async () => {
+      jest
+        .spyOn(mockDeleteContactUseCase, "execute")
+        .mockImplementation(() => Promise.resolve(true));
+
+      const response = await request(server).delete("/contact").send(query);
+      expect(response.status).toBe(204);
+    });
+
+    it("should return 500 to use case error", async () => {
+      jest
+        .spyOn(mockDeleteContactUseCase, "execute")
+        .mockImplementation(() => Promise.reject(Error()));
+
+      const response = await request(server).delete("/contact").send(query);
       expect(response.status).toBe(500);
     });
   });

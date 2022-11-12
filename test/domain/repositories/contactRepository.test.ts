@@ -10,6 +10,9 @@ class MockContactDataSource implements ContactDataSource {
   getAll(): Promise<Contact[]> {
     throw new Error("Method not implemented");
   }
+  delete(query: object): Promise<boolean> {
+    throw new Error("Method not implemented");
+  }
 }
 
 describe("Contact Repository", () => {
@@ -49,5 +52,19 @@ describe("Contact Repository", () => {
     const contactRepository = new ContactRepositoryImpl(mockContactDataSource);
     const result = await contactRepository.createContact(InputData);
     expect(result).toBe(true);
+  });
+
+  test("deleteContact should return true", async () => {
+    const query = {
+      firstName: "Luis",
+    };
+
+    jest
+      .spyOn(mockContactDataSource, "delete")
+      .mockImplementation(() => Promise.resolve(true));
+
+    const contactRepository = new ContactRepositoryImpl(mockContactDataSource);
+    const result = await contactRepository.deleteContact(query);
+    expect(result).toStrictEqual(true);
   });
 });

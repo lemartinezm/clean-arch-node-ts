@@ -1,17 +1,17 @@
 import { Contact } from "../../../src/domain/entities/contact";
 import { ContactRepository } from "../../../src/domain/interfaces/repositories/contactRepository";
-import { CreateContact } from "../../../src/domain/useCases/contact/createContact";
+import { DeleteContact } from "../../../src/domain/useCases/contact/deleteContact";
 
-describe("Get all contacts use case", () => {
+describe("Delete contact use case", () => {
   class MockContactRepository implements ContactRepository {
-    deleteContact(query: object): Promise<boolean> {
-      throw new Error("Method not implemented.");
-    }
     createContact(contact: Contact): Promise<boolean> {
       throw new Error("Method not implemented.");
     }
     getContacts(): Promise<Contact[]> {
-      throw new Error("Method not implemented");
+      throw new Error("Method not implemented.");
+    }
+    deleteContact(query: object): Promise<boolean> {
+      throw new Error("Method not implemented.");
     }
   }
 
@@ -22,20 +22,17 @@ describe("Get all contacts use case", () => {
     mockContactRepository = new MockContactRepository();
   });
 
-  it("should return data", async () => {
-    const InputData = {
-      id: "1",
-      surname: "Smith",
-      firstName: "John",
-      email: "john@email.com",
+  it("should return true", async () => {
+    const query = {
+      firstName: "Luis",
     };
 
     jest
-      .spyOn(mockContactRepository, "createContact")
+      .spyOn(mockContactRepository, "deleteContact")
       .mockImplementation(() => Promise.resolve(true));
 
-    const createContactUseCase = new CreateContact(mockContactRepository);
-    const result = await createContactUseCase.execute(InputData);
+    const deleteContactUseCase = new DeleteContact(mockContactRepository);
+    const result = await deleteContactUseCase.execute(query);
     expect(result).toBe(true);
   });
 });

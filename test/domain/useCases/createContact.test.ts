@@ -4,6 +4,9 @@ import { CreateContact } from "../../../src/domain/useCases/contact/createContac
 
 describe("Get all contacts use case", () => {
   class MockContactRepository implements ContactRepository {
+    updateContact(query: object, dataToUpdate: object): Promise<boolean> {
+      throw new Error("Method not implemented.");
+    }
     deleteContact(query: object): Promise<boolean> {
       throw new Error("Method not implemented.");
     }

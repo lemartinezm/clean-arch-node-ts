@@ -4,4 +4,5 @@ export interface ContactRepository {
   createContact(contact: Contact): Promise<boolean>;
   getContacts(): Promise<Contact[]>;
   deleteContact(query: object): Promise<boolean>;
+  updateContact(query: object, dataToUpdate: object): Promise<boolean>;
 }

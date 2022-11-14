@@ -4,6 +4,9 @@ import { ContactRepository } from "../../../src/domain/interfaces/repositories/c
 import { ContactRepositoryImpl } from "../../../src/domain/repositories/contactRepository";
 
 class MockContactDataSource implements ContactDataSource {
+  update(query: object, dataToUpdate: object): Promise<boolean> {
+    throw new Error("Method not implemented.");
+  }
   create(contact: Contact): Promise<boolean> {
     throw new Error("Method not implemented");
   }
@@ -66,5 +69,24 @@ describe("Contact Repository", () => {
     const contactRepository = new ContactRepositoryImpl(mockContactDataSource);
     const result = await contactRepository.deleteContact(query);
     expect(result).toStrictEqual(true);
+  });
+
+  test("updateContact should return true", async () => {
+    const query = {
+      firstName: "Luis",
+    };
+
+    const dataToUpdate = {
+      firstName: "Eduardo",
+      surname: "Ramirez",
+    };
+
+    jest
+      .spyOn(mockContactDataSource, "update")
+      .mockImplementation(() => Promise.resolve(true));
+
+    const contactRepository = new ContactRepositoryImpl(mockContactDataSource);
+    const result = await contactRepository.updateContact(query, dataToUpdate);
+    expect(result).toBe(true);
   });
 });

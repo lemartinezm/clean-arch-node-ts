@@ -9,6 +9,7 @@ describe("MongoDB DataSource", () => {
       find: jest.fn(),
       insertOne: jest.fn(),
       deleteOne: jest.fn(),
+      update: jest.fn(),
     };
   });
 
@@ -71,6 +72,26 @@ describe("MongoDB DataSource", () => {
 
     const result = await ds.delete(query);
     expect(mockDatabase.deleteOne).toHaveBeenCalledWith(query);
+    expect(result).toStrictEqual(true);
+  });
+
+  test("update", async () => {
+    const ds = new MongoDBContactDataSource(mockDatabase);
+    const query = {
+      firstName: "Luis",
+    };
+    const dataToUpdate = {
+      firstName: "Eduardo",
+      surname: "Ramirez",
+    };
+
+    jest
+      .spyOn(mockDatabase, "update")
+      .mockImplementation(() => Promise.resolve(true));
+
+    const result = await ds.update(query, dataToUpdate);
+    expect(mockDatabase.update).toHaveBeenCalledTimes(1);
+    expect(mockDatabase.update).toHaveBeenCalledWith(query, dataToUpdate);
     expect(result).toStrictEqual(true);
   });
 });

@@ -1,8 +1,8 @@
 import { Contact } from "../../../src/domain/entities/contact";
 import { ContactRepository } from "../../../src/domain/interfaces/repositories/contactRepository";
-import { DeleteContact } from "../../../src/domain/useCases/contact/deleteContact";
+import { UpdateContact } from "../../../src/domain/useCases/contact/updateContact";
 
-describe("Delete contact use case", () => {
+describe("Update contact use case", () => {
   class MockContactRepository implements ContactRepository {
     updateContact(query: object, dataToUpdate: object): Promise<boolean> {
       throw new Error("Method not implemented.");
@@ -18,7 +18,7 @@ describe("Delete contact use case", () => {
     }
   }
 
-  let mockContactRepository: ContactRepository;
+  let mockContactRepository: MockContactRepository;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -30,12 +30,17 @@ describe("Delete contact use case", () => {
       firstName: "Luis",
     };
 
+    const dataToUpdate = {
+      firstName: "Eduardo",
+      surname: "Rojas",
+    };
+
     jest
-      .spyOn(mockContactRepository, "deleteContact")
+      .spyOn(mockContactRepository, "updateContact")
       .mockImplementation(() => Promise.resolve(true));
 
-    const deleteContactUseCase = new DeleteContact(mockContactRepository);
-    const result = await deleteContactUseCase.execute(query);
-    expect(result).toBe(true);
+    const updateContactUseCase = new UpdateContact(mockContactRepository);
+    const result = await updateContactUseCase.execute(query, dataToUpdate);
+    expect(result).toStrictEqual(true);
   });
 });

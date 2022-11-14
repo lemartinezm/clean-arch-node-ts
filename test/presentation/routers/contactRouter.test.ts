@@ -3,6 +3,7 @@ import { Contact } from "../../../src/domain/entities/contact";
 import { CreateContactUseCase } from "../../../src/domain/interfaces/useCases/contact/createContact";
 import { DeleteContactUseCase } from "../../../src/domain/interfaces/useCases/contact/deleteContact";
 import { GetAllContactsUseCase } from "../../../src/domain/interfaces/useCases/contact/getAllContacts";
+import { UpdateContactUseCase } from "../../../src/domain/interfaces/useCases/contact/updateContact";
 import ContactRouter from "../../../src/presentation/routers/contactRouter";
 import server from "../../../src/server";
 
@@ -24,22 +25,31 @@ class MockDeleteContactUseCase implements DeleteContactUseCase {
   }
 }
 
+class MockUpdateContactUseCase implements UpdateContactUseCase {
+  execute(query: object, dataToUpdate: object): Promise<boolean> {
+    throw new Error("Method not implemented");
+  }
+}
+
 describe("Contact Router", () => {
   let mockCreateContactUseCase: CreateContactUseCase;
   let mockGetAllContactsUseCase: GetAllContactsUseCase;
   let mockDeleteContactUseCase: DeleteContactUseCase;
+  let mockUpdateContactUseCase: UpdateContactUseCase;
 
   beforeAll(() => {
     mockGetAllContactsUseCase = new MockGetAllContactsUseCase();
     mockCreateContactUseCase = new MockCreateContactUseCase();
     mockDeleteContactUseCase = new MockDeleteContactUseCase();
+    mockUpdateContactUseCase = new MockUpdateContactUseCase();
 
     server.use(
       "/contact",
       ContactRouter(
         mockGetAllContactsUseCase,
         mockCreateContactUseCase,
-        mockDeleteContactUseCase
+        mockDeleteContactUseCase,
+        mockUpdateContactUseCase
       )
     );
   });
@@ -128,6 +138,40 @@ describe("Contact Router", () => {
         .mockImplementation(() => Promise.reject(Error()));
 
       const response = await request(server).delete("/contact").send(query);
+      expect(response.status).toBe(500);
+    });
+  });
+
+  describe("PUT /contact", () => {
+    const query = {
+      firstName: "Luis",
+    };
+    const dataToUpdate = {
+      firstName: "Eduardo",
+      surname: "Ganoza",
+    };
+
+    it("should return 200 status", async () => {
+      jest
+        .spyOn(mockUpdateContactUseCase, "execute")
+        .mockImplementation(() => Promise.resolve(true));
+
+      const response = await request(server).put("/contact").send({
+        query,
+        dataToUpdate,
+      });
+      expect(response.status).toBe(200);
+    });
+
+    it("should return 500 status", async () => {
+      jest
+        .spyOn(mockUpdateContactUseCase, "execute")
+        .mockImplementation(() => Promise.reject(Error()));
+
+      const response = await request(server).put("/contact").send({
+        query,
+        dataToUpdate,
+      });
       expect(response.status).toBe(500);
     });
   });

@@ -30,7 +30,7 @@ export class MongoDBContactDataSource implements ContactDataSource {
   }
 
   async update(query: object, dataToUpdate: object): Promise<boolean> {
-    const result = await this.database.update(query, dataToUpdate);
+    const result = await this.database.update(query, {$set: dataToUpdate});
     return result;
   }
 }

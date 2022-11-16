@@ -91,7 +91,7 @@ describe("MongoDB DataSource", () => {
 
     const result = await ds.update(query, dataToUpdate);
     expect(mockDatabase.update).toHaveBeenCalledTimes(1);
-    expect(mockDatabase.update).toHaveBeenCalledWith(query, dataToUpdate);
+    expect(mockDatabase.update).toHaveBeenCalledWith(query, {$set: dataToUpdate});
     expect(result).toStrictEqual(true);
   });
 });

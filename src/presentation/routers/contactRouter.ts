@@ -41,7 +41,6 @@ export default function ContactsRouter(
 
   router.put("/", async (req: Request, res: Response) => {
     try {
-      console.log(req.body.query, req.body.dataToUpdate);
       await updateContactUseCase.execute(req.body.query, req.body.dataToUpdate);
       res.status(200).send({ message: "Contact updated successfully" });
     } catch (err) {
